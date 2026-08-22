@@ -120,12 +120,12 @@ public class User {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getName(), user.getName()) && Objects.equals(getSurname(), user.getSurname()) && Objects.equals(getPhone(), user.getPhone()) && Objects.equals(getAddress(), user.getAddress()) && Objects.equals(getCity(), user.getCity());
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getName(), user.getName()) && Objects.equals(getSurname(), user.getSurname()) && Objects.equals(getPhone(), user.getPhone()) && Objects.equals(getAddress(), user.getAddress()) && Objects.equals(getCity(), user.getCity());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUsername(), getPassword(), getEmail(), getName(), getSurname(), getPhone(), getAddress(), getCity());
+        return Objects.hash(getId(), getUsername(), getPassword(), getEmail(), getName(), getSurname(), getPhone(), getAddress(), getCity());
     }
 
     static void main() {
@@ -152,8 +152,6 @@ public class User {
                 "Khreshchatyk St, 1",
                 "Kyiv"
         );
-
         System.out.println(user.equals(user2));
-
     }
 }
