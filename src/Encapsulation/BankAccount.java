@@ -1,4 +1,4 @@
-package bank_account;
+package Encapsulation;
 
 import java.math.BigDecimal;
 
