@@ -7,9 +7,9 @@ import java.util.stream.Stream;
 public class Main {
     static void main() {
         List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee(1,"John", "Doe", 2000));
-        employees.add(new Employee(2,"Jojo", "Brando", 1000));
-        employees.add(new Employee(3,"Risotto", "Nero", 4000));
+        employees.add(new Employee(1,"John", "Doe", 2000, 20));
+        employees.add(new Employee(2,"Jojo", "Brando", 1000, 30));
+        employees.add(new Employee(3,"Risotto", "Nero", 4000, 60));
 
         employees.forEach(System.out::println);
         List<Employee> salaryMoreThan2000 =
@@ -38,6 +38,11 @@ public class Main {
         sortByLastNameDesc.forEach(System.out::println);
 
 
+        List<Employee> ageGreaterThan30 = employees.stream()
+                .filter(employee -> employee.getAge() >= 30)
+                .toList();
 
+        System.out.println("Age greater than 30");
+        ageGreaterThan30.forEach(System.out::println);
     }
 }
