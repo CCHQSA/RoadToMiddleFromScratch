@@ -1,4 +1,4 @@
-package Multithreading;
+package Multithreading.basic;
 
 public class RunnableThread {
     static void main() {

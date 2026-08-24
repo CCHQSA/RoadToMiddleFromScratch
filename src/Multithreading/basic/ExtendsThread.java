@@ -1,4 +1,4 @@
-package Multithreading;
+package Multithreading.basic;
 
 public class ExtendsThread {
     static void main() {

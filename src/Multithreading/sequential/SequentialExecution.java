@@ -1,4 +1,4 @@
-package Multithreading;
+package Multithreading.sequential;
 
 public class SequentialExecution {
     static void main() {

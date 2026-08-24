@@ -1,4 +1,4 @@
-package Multithreading;
+package Multithreading.basic;
 
 public class Main {
     Thread thread1 = new Thread(() -> {
