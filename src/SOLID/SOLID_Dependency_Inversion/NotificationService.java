@@ -1,4 +1,4 @@
-package SOLID_Dependency_Inversion;
+package SOLID.SOLID_Dependency_Inversion;
 
 import java.util.List;
 
