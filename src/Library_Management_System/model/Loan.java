@@ -9,8 +9,8 @@ public class Loan {
     private final User user;
     private final LocalDate borrowDate;
     private final LocalDate dueDate;
-    private final LocalDate returnDate;
-    private final LoanStatus status;
+    private LocalDate returnDate;
+    private LoanStatus status;
 
     public Loan(Long id, Book book, User user) {
         this.id = Objects.requireNonNull(id, "ID cannot be null");
@@ -49,4 +49,14 @@ public class Loan {
     public LoanStatus getStatus() {
         return status;
     }
+
+    public void returnLoan() {
+        if (status != LoanStatus.ACTIVE) {
+            throw new IllegalStateException("Loan is not active");
+        }
+
+        this.returnDate = LocalDate.now();
+        this.status = LoanStatus.RETURNED;
+    }
+
 }
