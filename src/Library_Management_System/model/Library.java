@@ -29,4 +29,30 @@ public class Library {
     public Map<Long, Book> getBooks() {
         return Collections.unmodifiableMap(books);
     }
+
+    public void addAuthor(Author author) {
+        authors.put(author.getId(), author);
+    }
+
+    public Map<Long, Author> getAuthors(){
+        return Collections.unmodifiableMap(authors);
+    }
+
+    public void removeAuthor(Long id) {
+        authors.remove(id);
+    }
+
+    public Map<Long, User> getUsers(){
+        return Collections.unmodifiableMap(users);
+    }
+
+    public void addUser(User user) {
+        users.put(user.getId(), user);
+    }
+
+    public void removeUser(Long id) {
+        users.remove(id);
+    }
+
+
 }
