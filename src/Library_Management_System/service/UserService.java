@@ -43,7 +43,7 @@ public class UserService {
     }
 
     public User findUserById(Library library, Long id) {
-        if (id == null) {
+        if (id == null || !library.getUsers().containsKey(id)) {
             throw new IllegalArgumentException("User ID cannot null");
         }
 

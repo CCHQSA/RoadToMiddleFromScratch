@@ -54,5 +54,17 @@ public class Library {
         users.remove(id);
     }
 
+    public void addLoan(Loan loan) {
+        loans.put(loan.getId(), loan);
+    }
+
+    public void removeLoan(Loan loan) {
+        loans.remove(loan.getId());
+    }
+
+    public  Map<Long, Loan> getLoans() {
+        return Collections.unmodifiableMap(loans);
+    }
+
 
 }

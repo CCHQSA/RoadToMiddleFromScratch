@@ -12,7 +12,7 @@ public class Loan {
     private final LocalDate returnDate;
     private final LoanStatus status;
 
-    public Loan(Long id, Book book, User user, LocalDate dueDate) {
+    public Loan(Long id, Book book, User user) {
         this.id = Objects.requireNonNull(id, "ID cannot be null");
         this.book = Objects.requireNonNull(book, "Book cannot be null");
         this.user = Objects.requireNonNull(user, "User cannot be null");

@@ -31,9 +31,10 @@ public class BookService {
     public Book findBookById(Library library, Long id) {
         Book book = library.getBooks().get(id);
 
-        if (book == null) {
+        if (book == null || !library.getBooks().containsKey(book.getId())) {
             throw new BookNotFoundException("Book not found: " + id);
         }
+
 
         return book;
     }
