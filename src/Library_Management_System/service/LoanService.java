@@ -8,6 +8,8 @@ import Library_Management_System.model.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class LoanService {
 
@@ -35,8 +37,8 @@ public class LoanService {
             throw new IllegalArgumentException("bookId is null");
         }
 
-        User user = userService.findUserById(library, userId);
-        Book book = bookService.findBookById(library, bookId);
+        User user = userService.findUserById(userId);
+        Book book = bookService.findBookById(bookId);
 
         if (!book.isAvailable()) {
             throw new BookAlreadyBorrowedException("Book already borrowed: " + bookId);
@@ -94,7 +96,7 @@ public class LoanService {
         return loan;
     }
 
-    public List<Loan> findActiveLoansForUser(User user){
+    public List<Loan> findActiveLoansForUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("user is null");
         }
@@ -103,12 +105,12 @@ public class LoanService {
                 .stream()
                 .filter(loan ->
                         loan.getUser().getId().equals(user.getId()) &&
-                        loan.getStatus() == LoanStatus.ACTIVE
+                                loan.getStatus() == LoanStatus.ACTIVE
                 )
                 .toList();
     }
 
-    public List<Loan> historyLoansForUser(User user){
+    public List<Loan> historyLoansForUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("user is null");
         }
@@ -133,7 +135,7 @@ public class LoanService {
                 .toList();
     }
 
-    public Loan findLoanForBook(Long  bookId) {
+    public Loan findLoanForBook(Long bookId) {
         if (bookId == null) {
             throw new IllegalArgumentException("bookId is null");
         }
@@ -146,12 +148,11 @@ public class LoanService {
                 .stream()
                 .filter(loan ->
                         loan.getBook().getId().equals(bookId) &&
-                        loan.getStatus() ==  LoanStatus.ACTIVE
+                                loan.getStatus() == LoanStatus.ACTIVE
                 )
                 .findFirst()
                 .orElseThrow(() -> new LoanNotFoundException("No current loan for book: " + bookId));
     }
-
 
 
     private boolean hasAlreadyActiveLoan(Long userId, Long bookId) {
@@ -171,5 +172,35 @@ public class LoanService {
 
 
         return FINE_PER_DAY.multiply(BigDecimal.valueOf(loan.getDaysOverdue()));
+    }
+
+    public List<Loan> findAllLoans() {
+        return library.getLoans().values()
+                .stream().toList();
+    }
+
+    public Map<Loan, BigDecimal> findAllWithFines() {
+        return library.getLoans().values()
+                .stream()
+                .collect(Collectors.toMap(
+                        loan -> loan,
+                        this::calculateFine
+                ))
+                .entrySet()
+                .stream()
+                .filter(entry ->
+                        entry.getValue().compareTo(BigDecimal.ZERO) > 0
+                )
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                ));
+    }
+
+    public List<Loan> findAllActive() {
+        return library.getLoans().values()
+                .stream()
+                .filter(loan -> loan.getStatus() == LoanStatus.ACTIVE)
+                .toList();
     }
 }

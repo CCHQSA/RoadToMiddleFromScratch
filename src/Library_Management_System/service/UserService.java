@@ -5,12 +5,19 @@ import Library_Management_System.model.User;
 import Library_Management_System.exception.UserAlreadyExistsException;
 import Library_Management_System.model.Library;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 public class UserService {
 
-    public void addUser(Library library, User user) {
+    private final Library library;
+
+    public UserService(Library library) {
+        this.library = library;
+    }
+
+    public void addUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
@@ -30,7 +37,7 @@ public class UserService {
         library.addUser(user);
     }
 
-    public void removeUser(Library library, Long id) {
+    public void removeUser(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("User ID cannot be null");
         }
@@ -42,8 +49,8 @@ public class UserService {
         library.removeUser(id);
     }
 
-    public User findUserById(Library library, Long id) {
-        if (id == null || !library.getUsers().containsKey(id)) {
+    public User findUserById(Long id) {
+        if (id == null) {
             throw new IllegalArgumentException("User ID cannot null");
         }
 
@@ -54,7 +61,7 @@ public class UserService {
         return library.getUsers().get(id);
     }
 
-    public List<User> findUserByName(Library library, String name) {
+    public List<User> findUserByName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("User name cannot be null");
         }
@@ -68,5 +75,10 @@ public class UserService {
                         user.getLastName().equalsIgnoreCase(trimmedName)
                         )
                 .toList();
+    }
+
+    public List<User> findAllUsers() {
+        return library.getUsers().values()
+                .stream().toList();
     }
 }
