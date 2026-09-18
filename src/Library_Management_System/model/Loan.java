@@ -1,6 +1,7 @@
 package Library_Management_System.model;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Loan {
@@ -51,12 +52,34 @@ public class Loan {
     }
 
     public void returnLoan() {
-        if (status != LoanStatus.ACTIVE) {
-            throw new IllegalStateException("Loan is not active");
+        if (status == LoanStatus.RETURNED) {
+            throw new IllegalStateException("Loan has already been returned");
         }
 
         this.returnDate = LocalDate.now();
         this.status = LoanStatus.RETURNED;
     }
 
+    public boolean checkIfOverdue() {
+        return (returnDate != null && returnDate.isAfter(dueDate))
+                || (returnDate == null && LocalDate.now().isAfter(dueDate));
+    }
+
+    public int getDaysOverdue() {
+        if (!checkIfOverdue()) {
+            return 0;
+        }
+
+        LocalDate endDate;
+
+        if (returnDate != null) {
+            endDate = returnDate;
+        } else {
+            endDate = LocalDate.now();
+        }
+
+        return Math.toIntExact(
+                ChronoUnit.DAYS.between(dueDate, endDate)
+        );
+    }
 }
