@@ -8,7 +8,13 @@ import java.util.List;
 
 public class AuthorService {
 
-    public void addAuthor(Library library, Author author) {
+    private final Library library;
+
+    public AuthorService(Library library) {
+        this.library = library;
+    }
+
+    public void addAuthor(Author author) {
         if (author == null) {
             throw new IllegalArgumentException("Author cannot be null");
         }
@@ -20,7 +26,7 @@ public class AuthorService {
         library.addAuthor(author);
     }
 
-    public Author findAuthorById(Library library, Long id) {
+    public Author findAuthorById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Author ID cannot be null");
         }
@@ -32,7 +38,7 @@ public class AuthorService {
         return library.getAuthors().get(id);
     }
 
-    public void removeAuthor(Library library, Long id) {
+    public void removeAuthor(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Author ID cannot be null");
         }
@@ -44,7 +50,7 @@ public class AuthorService {
         library.removeAuthor(id);
     }
 
-    public List<Author> findAuthorsByName(Library library, String name) {
+    public List<Author> findAuthorsByName(String name) {
         if (name == null ||  name.isBlank()) {
             throw new IllegalArgumentException("Author name cannot be null");
         }
