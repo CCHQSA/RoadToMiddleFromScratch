@@ -1,6 +1,11 @@
 package library.management.system.service;
 
-import library.management.system.model.*;
+import library.management.system.model.Author;
+import library.management.system.model.Book;
+import library.management.system.model.Genre;
+import library.management.system.model.Library;
+import library.management.system.model.Loan;
+import library.management.system.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LibraryStatisticsServiceTest {
 
-    private Library library;
     private BookService bookService;
     private UserService userService;
     private LoanService loanService;
@@ -27,127 +31,134 @@ class LibraryStatisticsServiceTest {
     private User userC;
     private Loan loanA;
     private Loan loanB;
-    private BigDecimal totalFine;
 
     @BeforeEach
     void setUp() {
-        library = new Library();
+        Library library = new Library();
 
         bookService = new BookService(library);
         userService = new UserService(library);
         loanService = new LoanService(library, userService, bookService);
-
         statisticsService = new LibraryStatisticsService(bookService, userService, loanService);
 
-        Author author = new Author(1L, "FirstName", "LastName", LocalDate.of(2000, 1, 1));
-        Genre genre1 = Genre.FICTION;
-        Genre genre2 = Genre.FANTASY;
+        Author author = new Author(1L, "Jonathan", "Joestar", LocalDate.of(1890, 3, 4));
 
-        bookA = new Book(1L, "Book A", "ISBN-A", List.of(author), genre1, LocalDate.now().minusMonths(1));
-        bookB = new Book(2L, "Book B", "ISBN-B", List.of(author), genre1, LocalDate.now().minusMonths(2));
-        bookC = new Book(3L, "Book C", "ISBN-C", List.of(author), genre2, LocalDate.now().minusMonths(3));
+        bookA = new Book(1L, "Book A", "ISBN-A", List.of(author), Genre.FICTION, LocalDate.of(2020, 1, 1));
+        bookB = new Book(2L, "Book B", "ISBN-B", List.of(author), Genre.FICTION, LocalDate.of(2021, 1, 1));
+        bookC = new Book(3L, "Book C", "ISBN-C", List.of(author), Genre.FANTASY, LocalDate.of(2022, 1, 1));
 
-        library.addBook(bookA);
-        library.addBook(bookB);
-        library.addBook(bookC);
+        bookService.addBook(bookA);
+        bookService.addBook(bookB);
+        bookService.addBook(bookC);
 
         userA = new User(1L, "John", "Doe", "john@example.com", LocalDate.now().minusDays(10));
         userB = new User(2L, "Jane", "Smith", "jane@example.com", LocalDate.now().minusDays(5));
         userC = new User(3L, "Jonathan", "Joestar", "jojo@example.com", LocalDate.now().minusDays(15));
 
-        library.addUser(userA);
-        library.addUser(userB);
+        userService.addUser(userA);
+        userService.addUser(userB);
+        userService.addUser(userC);
 
-        loanA = new Loan(1L, bookB, userA);
-        bookA.borrow();
-
-        loanB = new Loan(2L, bookC, userB);
-        bookC.borrow();
-
-        totalFine = statisticsService.getTotalFine();
-
-        library.addLoan(loanA);
-        library.addLoan(loanB);
-    }
-
-
-    @Test
-    void testGetAvailableBooks() {
-        List<Book> availableBooks = statisticsService.getAvailableBooks();
-
-        assertNotNull(availableBooks, "Available books list should not be null");
-        assertEquals(1, availableBooks.size(), "There should be exactly 1 available books");
-        assertTrue(availableBooks.contains(bookB), "Should contain Book B");
-        assertFalse(availableBooks.contains(bookA), "Should NOT contain Book A");
-        assertFalse(availableBooks.contains(bookC), "Should NOT contain Book C");
+        loanA = loanService.createLoan(userA.getId(), bookA.getId());
+        loanB = loanService.createLoan(userB.getId(), bookB.getId());
     }
 
     @Test
-    void testGetBorrowedBooks() {
-        List<Book> borrowedBooks = statisticsService.getBorrowedBooks();
+    void getAllBooks_ShouldReturnEveryBook() {
+        List<Book> books = statisticsService.getAllBooks();
 
-        assertNotNull(borrowedBooks, "Borrowed books list should not be null");
-        assertTrue(borrowedBooks.contains(bookA), "Should contain Book A");
-        assertTrue(borrowedBooks.contains(bookC), "Should contain Book C");
-        assertFalse(borrowedBooks.contains(bookB), "Should NOT contain Book B");
+        assertEquals(3, books.size());
+        assertTrue(books.contains(bookA));
+        assertTrue(books.contains(bookB));
+        assertTrue(books.contains(bookC));
     }
 
     @Test
-    void testGetAllUsers() {
-        List<User> allUsers = statisticsService.getAllUsers();
-
-        assertNotNull(allUsers, "All users list should not be null");
-        assertEquals(2, allUsers.size(), "There should be exactly 2 all users");
-        assertTrue(allUsers.contains(userA), "Should contain User A");
-        assertTrue(allUsers.contains(userB), "Should contain User B");
+    void getAvailableBooks_ShouldReturnOnlyBooksWithoutActiveBorrowState() {
+        assertEquals(List.of(bookC), statisticsService.getAvailableBooks());
     }
 
     @Test
-    void testGetAllLoans() {
-        List<Loan> allLoans = statisticsService.getAllLoans();
+    void getBorrowedBooks_ShouldReturnOnlyBorrowedBooks() {
+        List<Book> books = statisticsService.getBorrowedBooks();
 
-        assertNotNull(allLoans, "All loans list should not be null");
-        assertEquals(2, allLoans.size(), "There should be exactly 1 loans");
-        assertTrue(allLoans.contains(loanA), "Should contain Loan A");
+        assertEquals(2, books.size());
+        assertTrue(books.contains(bookA));
+        assertTrue(books.contains(bookB));
+        assertFalse(books.contains(bookC));
     }
 
     @Test
-    void getTotalFine() {
-        BigDecimal totalFine = statisticsService.getTotalFine();
-        assertNotNull(totalFine, "Total fine should not be null");
+    void getAllUsers_ShouldReturnEveryUser() {
+        List<User> users = statisticsService.getAllUsers();
+
+        assertEquals(3, users.size());
+        assertTrue(users.contains(userA));
+        assertTrue(users.contains(userB));
+        assertTrue(users.contains(userC));
     }
 
     @Test
-    void getMostBorrowedBooks() {
+    void getAllLoans_ShouldReturnEveryLoan() {
+        List<Loan> loans = statisticsService.getAllLoans();
+
+        assertEquals(2, loans.size());
+        assertTrue(loans.contains(loanA));
+        assertTrue(loans.contains(loanB));
+    }
+
+    @Test
+    void getTotalFine_ShouldReturnZero_WhenNoLoansHaveFines() {
+        assertEquals(BigDecimal.ZERO, statisticsService.getTotalFine());
+    }
+
+    @Test
+    void getMostBorrowedBooks_ShouldCountLoansByBook() {
         Map<Book, Long> mostBorrowed = statisticsService.getMostBorrowedBooks();
 
-        assertNotNull(mostBorrowed, "Most borrowed Books list should not be null");
-        assertEquals(2, mostBorrowed.size(), "There should be exactly 2 most borrowed books");
-        assertTrue(mostBorrowed.containsKey(bookB), "Should contain Book B");
-        assertTrue(mostBorrowed.containsKey(bookC), "Should contain Book C");
-        assertFalse(mostBorrowed.containsKey(bookA), "Should NOT contain Book A");
-
-
+        assertEquals(2, mostBorrowed.size());
+        assertEquals(1L, mostBorrowed.get(bookA));
+        assertEquals(1L, mostBorrowed.get(bookB));
+        assertFalse(mostBorrowed.containsKey(bookC));
     }
 
     @Test
-    void getMostActiveUsers() {
+    void getMostBorrowedBooks_ShouldReturnEmptyMap_WhenThereAreNoLoans() {
+        LibraryStatisticsService emptyStatisticsService = createEmptyStatisticsService();
+
+        assertTrue(emptyStatisticsService.getMostBorrowedBooks().isEmpty());
+    }
+
+    @Test
+    void getMostActiveUsers_ShouldCountLoansByUser() {
         Map<User, Long> mostActiveUsers = statisticsService.getMostActiveUsers();
 
-        assertNotNull(mostActiveUsers, "Most active users list should not be null");
-        assertEquals(2, mostActiveUsers.size(), "There should be exactly 2 active users");
-        assertTrue(mostActiveUsers.containsKey(userA), "Should contain User A");
-        assertTrue(mostActiveUsers.containsKey(userB), "Should contain User B");
-        assertFalse(mostActiveUsers.containsKey(userC), "Should NOT contain User C");
+        assertEquals(2, mostActiveUsers.size());
+        assertEquals(1L, mostActiveUsers.get(userA));
+        assertEquals(1L, mostActiveUsers.get(userB));
+        assertFalse(mostActiveUsers.containsKey(userC));
     }
 
     @Test
-    void getActiveLoans() {
-        List<Loan> activeLoans = statisticsService.getActiveLoans();
+    void getMostActiveUsers_ShouldReturnEmptyMap_WhenThereAreNoLoans() {
+        LibraryStatisticsService emptyStatisticsService = createEmptyStatisticsService();
 
-        assertNotNull(activeLoans, "Active loans list should not be null");
-        assertEquals(2, activeLoans.size(), "There should be exactly 2 active loans");
-        assertTrue(activeLoans.contains(loanA), "Should contain Loan A");
-        assertTrue(activeLoans.contains(loanB), "Should contain Loan B");
+        assertTrue(emptyStatisticsService.getMostActiveUsers().isEmpty());
+    }
+
+    @Test
+    void getActiveLoans_ShouldReturnOnlyActiveLoans() {
+        loanService.returnLoan(loanB.getId());
+
+        assertEquals(List.of(loanA), statisticsService.getActiveLoans());
+    }
+
+    private LibraryStatisticsService createEmptyStatisticsService() {
+        Library library = new Library();
+        BookService bookService = new BookService(library);
+        UserService userService = new UserService(library);
+        LoanService loanService = new LoanService(library, userService, bookService);
+
+        return new LibraryStatisticsService(bookService, userService, loanService);
     }
 }

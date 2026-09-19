@@ -1,5 +1,6 @@
 package library.management.system.service;
 
+import library.management.system.exception.AuthorAlreadyExistsException;
 import library.management.system.exception.AuthorNotFoundException;
 import library.management.system.model.Author;
 import library.management.system.model.Library;
@@ -14,30 +15,40 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthorServiceTest {
 
     private AuthorService authorService;
-    private Library library;
     private Author authorA;
     private Author authorB;
 
     @BeforeEach
     void setUp() {
-        library = new Library();
+        Library library = new Library();
+        authorService = new AuthorService(library);
 
         authorA = new Author(1L, "Jonathan", "Joestar", LocalDate.of(1890, 3, 4));
         authorB = new Author(2L, "Jotaro", "Joestar", LocalDate.of(1940, 5, 13));
 
-        library.addAuthor(authorA);
-        library.addAuthor(authorB);
-
-        authorService = new AuthorService(library);
+        authorService.addAuthor(authorA);
+        authorService.addAuthor(authorB);
     }
 
     @Test
-    void addAuthor_ShouldSuccessfullyAddAuthor() {
-        Author authorC = new Author(3L, "Hisoka", "Morro", LocalDate.of(1940, 5, 13));
+    void addAuthor_ShouldAddAuthor_WhenAuthorIsNew() {
+        Author author = new Author(3L, "Hisoka", "Morro", LocalDate.of(1973, 6, 6));
 
-        authorService.addAuthor(authorC);
+        authorService.addAuthor(author);
 
-        assertEquals(authorC, authorService.findAuthorById(3L), "Should find the newly added author");
+        assertEquals(author, authorService.findAuthorById(3L));
+    }
+
+    @Test
+    void addAuthor_ShouldThrowException_WhenAuthorIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> authorService.addAuthor(null));
+    }
+
+    @Test
+    void addAuthor_ShouldThrowException_WhenIdAlreadyExists() {
+        Author duplicateId = new Author(1L, "Joseph", "Joestar", LocalDate.of(1920, 9, 27));
+
+        assertThrows(AuthorAlreadyExistsException.class, () -> authorService.addAuthor(duplicateId));
     }
 
     @Test
@@ -47,31 +58,69 @@ class AuthorServiceTest {
     }
 
     @Test
+    void findAuthorById_ShouldThrowException_WhenIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> authorService.findAuthorById(null));
+    }
+
+    @Test
     void findAuthorById_ShouldThrowException_WhenIdDoesNotExist() {
         assertThrows(AuthorNotFoundException.class, () -> authorService.findAuthorById(999L));
     }
 
     @Test
-    void removeAuthor_ShouldDeleteAuthorFromLibrary() {
+    void removeAuthor_ShouldRemoveAuthor_WhenIdExists() {
         authorService.removeAuthor(1L);
 
-        assertThrows(AuthorNotFoundException.class, () -> authorService.findAuthorById(1L),
-                "Should throw exception because author was removed");
+        assertThrows(AuthorNotFoundException.class, () -> authorService.findAuthorById(1L));
+        assertEquals(authorB, authorService.findAuthorById(2L));
     }
 
     @Test
-    void findAuthorsByName_ShouldReturnCorrectAuthors() {
-        List<Author> foundByFirstName = authorService.findAuthorsByName("Jonathan");
-        List<Author> foundByLastName = authorService.findAuthorsByName("Joestar");
-        List<Author> notFound = authorService.findAuthorsByName("NonExistingName");
+    void removeAuthor_ShouldThrowException_WhenIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> authorService.removeAuthor(null));
+    }
 
-        assertEquals(1, foundByFirstName.size());
-        assertTrue(foundByFirstName.contains(authorA));
+    @Test
+    void removeAuthor_ShouldThrowException_WhenIdDoesNotExist() {
+        assertThrows(AuthorNotFoundException.class, () -> authorService.removeAuthor(999L));
+    }
 
-        assertEquals(2, foundByLastName.size());
-        assertTrue(foundByLastName.contains(authorA));
-        assertTrue(foundByLastName.contains(authorB));
+    @Test
+    void findAuthorsByName_ShouldReturnAuthor_WhenFirstNameMatchesIgnoringCase() {
+        assertEquals(List.of(authorA), authorService.findAuthorsByName("jonathan"));
+    }
 
-        assertTrue(notFound.isEmpty(), "Should return an empty list if no match found");
+    @Test
+    void findAuthorsByName_ShouldReturnAuthors_WhenLastNameMatchesIgnoringCase() {
+        List<Author> authors = authorService.findAuthorsByName("JOESTAR");
+
+        assertEquals(2, authors.size());
+        assertTrue(authors.contains(authorA));
+        assertTrue(authors.contains(authorB));
+    }
+
+    @Test
+    void findAuthorsByName_ShouldReturnAuthor_WhenFullNameMatchesIgnoringCase() {
+        assertEquals(List.of(authorB), authorService.findAuthorsByName("jotaro joestar"));
+    }
+
+    @Test
+    void findAuthorsByName_ShouldTrimSearchTerm() {
+        assertEquals(List.of(authorA), authorService.findAuthorsByName("  Jonathan  "));
+    }
+
+    @Test
+    void findAuthorsByName_ShouldReturnEmptyList_WhenNoAuthorMatches() {
+        assertTrue(authorService.findAuthorsByName("Dio Brando").isEmpty());
+    }
+
+    @Test
+    void findAuthorsByName_ShouldThrowException_WhenNameIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> authorService.findAuthorsByName(null));
+    }
+
+    @Test
+    void findAuthorsByName_ShouldThrowException_WhenNameIsBlank() {
+        assertThrows(IllegalArgumentException.class, () -> authorService.findAuthorsByName(" "));
     }
 }
