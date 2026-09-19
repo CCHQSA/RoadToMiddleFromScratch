@@ -102,8 +102,23 @@ class BookServiceTest {
     }
 
     @Test
+    void findByISBN_ShouldThrowException_WhenIsbnIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> bookService.findByISBN(null));
+    }
+
+    @Test
     void findByISBN_ShouldThrowException_WhenIsbnDoesNotExist() {
         assertThrows(BookNotFoundException.class, () -> bookService.findByISBN("UNKNOWN"));
+    }
+
+    @Test
+    void findByTitle_ShouldThrowException_WhenTitleIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> bookService.findByTitle(null));
+    }
+
+    @Test
+    void findByTitle_ShouldThrowException_WhenTitleIsBlank() {
+        assertThrows(IllegalArgumentException.class, () -> bookService.findByTitle(" "));
     }
 
     @Test
@@ -115,12 +130,32 @@ class BookServiceTest {
     }
 
     @Test
+    void findByAuthor_ShouldThrowException_WhenAuthorIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> bookService.findByAuthor(null));
+    }
+
+    @Test
+    void findByAuthor_ShouldThrowException_WhenAuthorIsBlank() {
+        assertThrows(IllegalArgumentException.class, () -> bookService.findByAuthor(" "));
+    }
+
+    @Test
     void findByAuthor_ShouldReturnBooks_WhenAuthorNameMatchesIgnoringCase() {
         List<Book> books = bookService.findByAuthor("joestar");
 
         assertEquals(2, books.size());
         assertTrue(books.contains(bookA));
         assertTrue(books.contains(borrowedBook));
+    }
+
+    @Test
+    void findByGenre_ShouldThrowException_WhenGenreIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> bookService.findByGenre(null));
+    }
+
+    @Test
+    void findByGenre_ShouldThrowException_WhenGenreIsBlank() {
+        assertThrows(IllegalArgumentException.class, () -> bookService.findByGenre(" "));
     }
 
     @Test

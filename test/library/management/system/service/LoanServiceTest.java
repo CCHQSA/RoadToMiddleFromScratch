@@ -13,6 +13,7 @@ import library.management.system.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -172,6 +173,14 @@ class LoanServiceTest {
     }
 
     @Test
+    void findOverdueLoansForUser_ShouldReturnOverdueLoan() throws ReflectiveOperationException {
+        Loan overdueLoan = loanService.createLoan(1L, 1L);
+        makeOverdue(overdueLoan);
+
+        assertEquals(List.of(overdueLoan), loanService.findOverdueLoansForUser(userA));
+    }
+
+    @Test
     void findLoanForBook_ShouldReturnActiveLoanForBook() {
         Loan loan = loanService.createLoan(1L, 1L);
 
@@ -193,6 +202,14 @@ class LoanServiceTest {
         Loan loan = loanService.createLoan(1L, 1L);
 
         assertEquals(BigDecimal.ZERO, loanService.calculateFine(loan));
+    }
+
+    @Test
+    void calculateFine_ShouldReturnFineBasedOnDaysOverdue() throws ReflectiveOperationException {
+        Loan loan = loanService.createLoan(1L, 1L);
+        makeOverdue(loan);
+
+        assertEquals(BigDecimal.valueOf(30), loanService.calculateFine(loan));
     }
 
     @Test
@@ -228,5 +245,11 @@ class LoanServiceTest {
         loanService.returnLoan(returnedLoan.getId());
 
         assertEquals(List.of(activeLoan), loanService.findAllActive());
+    }
+
+    private void makeOverdue(Loan loan) throws ReflectiveOperationException {
+        Field dueDate = Loan.class.getDeclaredField("dueDate");
+        dueDate.setAccessible(true);
+        dueDate.set(loan, LocalDate.now().minusDays(3));
     }
 }

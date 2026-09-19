@@ -130,6 +130,38 @@ class LibraryStatisticsServiceTest {
     }
 
     @Test
+    void getMostBorrowedBooks_ShouldReturnFewerThanFiveBooks_WhenFewerThanFiveBooksHaveLoans() {
+        Map<Book, Long> mostBorrowed = statisticsService.getMostBorrowedBooks();
+
+        assertEquals(2, mostBorrowed.size());
+        assertTrue(mostBorrowed.keySet().containsAll(List.of(bookA, bookB)));
+    }
+
+    @Test
+    void getMostBorrowedBooks_ShouldReturnAtMostFiveBooks_WhenMoreThanFiveBooksHaveLoans() {
+        Author author = new Author(2L, "Jotaro", "Kujo", LocalDate.of(1940, 5, 13));
+        Book bookD = new Book(4L, "Book D", "ISBN-D", List.of(author), Genre.HISTORY, LocalDate.of(2023, 1, 1));
+        Book bookE = new Book(5L, "Book E", "ISBN-E", List.of(author), Genre.HISTORY, LocalDate.of(2023, 1, 2));
+        Book bookF = new Book(6L, "Book F", "ISBN-F", List.of(author), Genre.HISTORY, LocalDate.of(2023, 1, 3));
+        Book bookG = new Book(7L, "Book G", "ISBN-G", List.of(author), Genre.HISTORY, LocalDate.of(2023, 1, 4));
+
+        bookService.addBook(bookD);
+        bookService.addBook(bookE);
+        bookService.addBook(bookF);
+        bookService.addBook(bookG);
+        loanService.createLoan(userC.getId(), bookC.getId());
+        loanService.createLoan(userC.getId(), bookD.getId());
+        loanService.createLoan(userC.getId(), bookE.getId());
+        loanService.createLoan(userC.getId(), bookF.getId());
+        loanService.createLoan(userC.getId(), bookG.getId());
+
+        Map<Book, Long> mostBorrowed = statisticsService.getMostBorrowedBooks();
+
+        assertEquals(5, mostBorrowed.size());
+        assertTrue(mostBorrowed.values().stream().allMatch(count -> count == 1L));
+    }
+
+    @Test
     void getMostActiveUsers_ShouldCountLoansByUser() {
         Map<User, Long> mostActiveUsers = statisticsService.getMostActiveUsers();
 
@@ -151,6 +183,23 @@ class LibraryStatisticsServiceTest {
         loanService.returnLoan(loanB.getId());
 
         assertEquals(List.of(loanA), statisticsService.getActiveLoans());
+    }
+
+    @Test
+    void getStatistics_ShouldReturnEmptyCollections_WhenLibraryIsEmpty() {
+        LibraryStatisticsService emptyStatisticsService = createEmptyStatisticsService();
+
+        assertAll(
+                () -> assertTrue(emptyStatisticsService.getAllBooks().isEmpty()),
+                () -> assertTrue(emptyStatisticsService.getAvailableBooks().isEmpty()),
+                () -> assertTrue(emptyStatisticsService.getBorrowedBooks().isEmpty()),
+                () -> assertTrue(emptyStatisticsService.getAllUsers().isEmpty()),
+                () -> assertTrue(emptyStatisticsService.getAllLoans().isEmpty()),
+                () -> assertEquals(BigDecimal.ZERO, emptyStatisticsService.getTotalFine()),
+                () -> assertTrue(emptyStatisticsService.getMostBorrowedBooks().isEmpty()),
+                () -> assertTrue(emptyStatisticsService.getMostActiveUsers().isEmpty()),
+                () -> assertTrue(emptyStatisticsService.getActiveLoans().isEmpty())
+        );
     }
 
     private LibraryStatisticsService createEmptyStatisticsService() {

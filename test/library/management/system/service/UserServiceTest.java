@@ -104,6 +104,11 @@ class UserServiceTest {
     }
 
     @Test
+    void findUserByName_ShouldThrowException_WhenNameIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> userService.findUserByName(null));
+    }
+
+    @Test
     void findAllUsers_ShouldReturnEveryUser() {
         List<User> users = userService.findAllUsers();
 
