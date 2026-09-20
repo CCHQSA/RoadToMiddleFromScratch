@@ -51,4 +51,13 @@ public class Author {
         Period age = Period.between(birthDate, LocalDate.now());
         return age.getYears();
     }
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", name='" + getFullName() + '\'' +
+                ", birthDate=" + birthDate +
+                '}';
+    }
 }

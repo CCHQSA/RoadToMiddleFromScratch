@@ -82,4 +82,17 @@ public class Loan {
                 ChronoUnit.DAYS.between(dueDate, endDate)
         );
     }
+
+    @Override
+    public String toString() {
+        return "Loan{" +
+                "id=" + id +
+                ", book=" + book.getTitle() +
+                ", user=" + user.getFullName() +
+                ", borrowDate=" + borrowDate +
+                ", dueDate=" + dueDate +
+                ", returnDate=" + returnDate +
+                ", status=" + status +
+                '}';
+    }
 }

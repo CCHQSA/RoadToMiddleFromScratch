@@ -64,5 +64,14 @@ public class User {
         return ChronoUnit.DAYS.between(registrationDate,today);
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + getFullName() + '\'' +
+                ", email='" + email + '\'' +
+                ", registrationDate=" + registrationDate +
+                '}';
+    }
 
 }

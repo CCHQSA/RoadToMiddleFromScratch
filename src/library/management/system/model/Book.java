@@ -83,5 +83,16 @@ public class Book {
         available = true;
     }
 
-
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", authors=" + authors +
+                ", genre=" + genre +
+                ", publicationDate=" + publicationDate +
+                ", available=" + available +
+                '}';
+    }
 }
