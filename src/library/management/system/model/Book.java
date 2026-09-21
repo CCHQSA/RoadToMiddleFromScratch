@@ -6,8 +6,11 @@ import library.management.system.exception.BookIsNotBorrowedException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Book {
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
+
     private final Long id;
     private final String title;
     private final String isbn;
@@ -15,6 +18,16 @@ public class Book {
     private final Genre genre;
     private final LocalDate publicationDate;
     private boolean available;
+
+    public Book(
+            String title,
+            String isbn,
+            List<Author> authors,
+            Genre genre,
+            LocalDate publicationDate
+    ) {
+        this(ID_GENERATOR.getAndIncrement(), title, isbn, authors, genre, publicationDate);
+    }
 
     public Book(
             Long id,

@@ -38,9 +38,6 @@ public class BookService {
     }
 
     public Book findBookById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Book ID cannot be null");
-        }
 
         Book book = library.getBooks().get(id);
 

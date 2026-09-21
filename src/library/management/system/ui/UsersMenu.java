@@ -58,12 +58,6 @@ public class UsersMenu {
     }
 
     private void addUser() {
-        System.out.print("Enter User ID: ");
-        long id = input.nextLong();
-        if (id <= 0) {
-            throw new IllegalArgumentException("User ID must be greater than zero");
-        }
-
         System.out.print("Enter first name: ");
         String firstName = readRequiredText("First name");
 
@@ -71,12 +65,12 @@ public class UsersMenu {
         String lastName = readRequiredText("Last name");
 
         System.out.print("Enter email: ");
-        String email = readEmail();
+        String email = readRequiredText("Email");
 
         System.out.print("Enter registration date (YYYY-MM-DD): ");
         LocalDate registrationDate = readRegistrationDate();
 
-        userService.addUser(new User(id, firstName, lastName, email, registrationDate));
+        userService.addUser(new User(firstName, lastName, email, registrationDate));
         System.out.println("User added successfully.");
     }
 
@@ -88,13 +82,6 @@ public class UsersMenu {
         return value;
     }
 
-    private String readEmail() {
-        String email = readRequiredText("Email");
-        if (!email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
-            throw new IllegalArgumentException("Invalid email address");
-        }
-        return email;
-    }
 
     private LocalDate readRegistrationDate() {
         String value = readRequiredText("Registration date");

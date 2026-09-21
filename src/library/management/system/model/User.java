@@ -3,13 +3,26 @@ package library.management.system.model;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
+
     private final Long id;
     private final String firstName;
     private final String lastName;
     private final String email;
     private final LocalDate registrationDate;
+
+    public User(
+            String firstName,
+            String lastName,
+            String email,
+            LocalDate registrationDate
+    ) {
+        this(ID_GENERATOR.getAndIncrement(), firstName, lastName, email, registrationDate);
+    }
 
     public User(
             Long id,

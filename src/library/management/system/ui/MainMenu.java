@@ -23,7 +23,7 @@ public class MainMenu {
     ) {
         this.input = input;
         this.loanService = loanService;
-        this.booksMenu = new BooksMenu(input, bookService, authorService, statisticsService);
+        this.booksMenu = new BooksMenu(input, bookService, authorService);
         this.usersMenu = new UsersMenu(input, userService);
         this.loansMenu = new LoansMenu(input, loanService, userService);
         this.statisticsMenu = new StatisticsMenu(input, statisticsService);

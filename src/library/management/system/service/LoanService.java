@@ -49,11 +49,7 @@ public class LoanService {
             throw new AlreadyHasActiveLoan("Already have an active loan");
         }
 
-        Long loanId = library.getLoans().keySet().stream()
-                .max(Long::compare)
-                .orElse(null);
-
-        Loan loan = new Loan(loanId != null ? loanId + 1 : 1, book, user);
+        Loan loan = new Loan(book, user);
 
         book.borrow();
         library.addLoan(loan);
@@ -62,9 +58,6 @@ public class LoanService {
     }
 
     public void returnLoan(Long loanId) {
-        if (loanId == null) {
-            throw new IllegalArgumentException("loanId is null");
-        }
 
         Loan loan = library.getLoans().get(loanId);
 
@@ -83,9 +76,6 @@ public class LoanService {
     }
 
     public Loan findById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID is null");
-        }
 
         Loan loan = library.getLoans().get(id);
 

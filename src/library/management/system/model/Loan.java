@@ -3,8 +3,11 @@ package library.management.system.model;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Loan {
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
+
     private final Long id;
     private final Book book;
     private final User user;
@@ -12,6 +15,13 @@ public class Loan {
     private final LocalDate dueDate;
     private LocalDate returnDate;
     private LoanStatus status;
+
+    public Loan(
+            Book book,
+            User user
+    ) {
+        this(ID_GENERATOR.getAndIncrement(), book,user);
+    }
 
     public Loan(Long id, Book book, User user) {
         this.id = Objects.requireNonNull(id, "ID cannot be null");

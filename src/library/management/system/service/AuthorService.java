@@ -27,9 +27,6 @@ public class AuthorService {
     }
 
     public Author findAuthorById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Author ID cannot be null");
-        }
 
         if (!library.getAuthors().containsKey(id)) {
             throw new AuthorNotFoundException("Author not found");
@@ -39,9 +36,6 @@ public class AuthorService {
     }
 
     public void removeAuthor(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Author ID cannot be null");
-        }
 
         if (!library.getAuthors().containsKey(id)) {
             throw new AuthorNotFoundException("Author not found");
@@ -62,5 +56,10 @@ public class AuthorService {
                         author.getFirstName().equalsIgnoreCase(trimmedName) ||
                         author.getLastName().equalsIgnoreCase(trimmedName)
                 ).toList();
+    }
+
+    public List<Author> getAllAuthors(){
+        return library.getAuthors().values()
+                .stream().toList();
     }
 }

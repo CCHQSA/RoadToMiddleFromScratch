@@ -3,12 +3,23 @@ package library.management.system.model;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Author {
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
+
     private final Long id;
     private final String firstName;
     private final String lastName;
     private final LocalDate birthDate;
+
+    public Author(
+            String firstName,
+            String lastName,
+            LocalDate birthDate
+    ) {
+        this(ID_GENERATOR.getAndIncrement(), firstName, lastName, birthDate);
+    }
 
     public Author(
             Long id,
