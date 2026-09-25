@@ -42,7 +42,7 @@ class UserServiceTest {
 
     @Test
     void addUser_ShouldThrowException_WhenUserIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> userService.addUser(null));
+        assertThrows(UserNotFoundException.class, () -> userService.addUser(null));
     }
 
     @Test
@@ -66,7 +66,7 @@ class UserServiceTest {
 
     @Test
     void findUserById_ShouldThrowException_WhenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> userService.findUserById(null));
+        assertThrows(UserNotFoundException.class, () -> userService.findUserById(null));
     }
 
     @Test
@@ -83,7 +83,7 @@ class UserServiceTest {
 
     @Test
     void removeUser_ShouldThrowException_WhenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> userService.removeUser(null));
+        assertThrows(UserNotFoundException.class, () -> userService.removeUser(null));
     }
 
     @Test

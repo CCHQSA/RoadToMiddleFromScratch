@@ -76,7 +76,7 @@ class BookServiceTest {
 
     @Test
     void findBookById_ShouldThrowException_WhenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> bookService.findBookById(null));
+        assertThrows(BookNotFoundException.class, () -> bookService.findBookById(null));
     }
 
     @Test

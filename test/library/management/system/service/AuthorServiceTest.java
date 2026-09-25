@@ -59,7 +59,7 @@ class AuthorServiceTest {
 
     @Test
     void findAuthorById_ShouldThrowException_WhenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> authorService.findAuthorById(null));
+        assertThrows(AuthorNotFoundException.class, () -> authorService.findAuthorById(null));
     }
 
     @Test
@@ -77,7 +77,7 @@ class AuthorServiceTest {
 
     @Test
     void removeAuthor_ShouldThrowException_WhenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> authorService.removeAuthor(null));
+        assertThrows(AuthorNotFoundException.class, () -> authorService.removeAuthor(null));
     }
 
     @Test

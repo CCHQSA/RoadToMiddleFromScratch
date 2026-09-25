@@ -49,7 +49,11 @@ public class LoanService {
             throw new AlreadyHasActiveLoan("Already have an active loan");
         }
 
-        Loan loan = new Loan(book, user);
+        long nextLoanId = library.getLoans().keySet().stream()
+                .mapToLong(Long::longValue)
+                .max()
+                .orElse(0L);
+        Loan loan = new Loan(Math.incrementExact(nextLoanId), book, user);
 
         book.borrow();
         library.addLoan(loan);

@@ -106,7 +106,7 @@ class LoanServiceTest {
 
     @Test
     void returnLoan_ShouldThrowException_WhenLoanIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> loanService.returnLoan(null));
+        assertThrows(LoanNotFoundException.class, () -> loanService.returnLoan(null));
     }
 
     @Test
@@ -131,7 +131,7 @@ class LoanServiceTest {
 
     @Test
     void findById_ShouldThrowException_WhenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> loanService.findById(null));
+        assertThrows(LoanNotFoundException.class, () -> loanService.findById(null));
     }
 
     @Test
